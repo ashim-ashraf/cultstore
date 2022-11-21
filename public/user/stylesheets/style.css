@@ -1,0 +1,13 @@
+body {
+  padding: 0;
+  margin: 0;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.gradient-custom {
+  background: linear-gradient(to right, rgba(106, 17, 203, 1), rgb(228, 33, 33))
+  }
