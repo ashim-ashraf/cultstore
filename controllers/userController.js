@@ -464,7 +464,7 @@ module.exports = {
     );
   },
 
-  //todo
+
 
   orderSuccess: async (req, res) => {
     let user = req.session.user;
@@ -494,7 +494,6 @@ module.exports = {
     req.session.userloggedIn = null;
     console.log("session destroyed");
     res.redirect("/login");
-    
   },
 
   otpLogin: (req, res) => {
