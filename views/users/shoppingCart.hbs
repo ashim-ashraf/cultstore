@@ -41,7 +41,7 @@
 	<!-- breadcrumb -->
 	<div class="container pt-5">
 		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg pt-5">
-			<a href="/homePage" class="stext-109 cl8 hov-cl1 trans-04">
+			<a href="/" class="stext-109 cl8 hov-cl1 trans-04">
 				Home
 				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
 			</a>
@@ -55,11 +55,11 @@
 
 	<!-- Shoping Cart -->
 	<form class="bg0 p-t-75 p-b-85">
-		<div class="container">
+		<div id="cartReload" class="container">
 			<div class="row">
-				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+				<div  class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
 					<div class="m-l-25 m-r--38 m-lr-0-xl">
-						<div id="cartReload" class="wrap-table-shopping-cart">
+						<div  class="wrap-table-shopping-cart">
 							{{#each cartProducts }}  
 							<table class="table-shopping-cart">
 								<tr class="table_head">
@@ -91,6 +91,8 @@
 											<div class="">
 												{{#if_Neq this.quantity "1"}}
 												<a  onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user}}',-1)" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">-</a>
+												{{else}}
+												<a class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"></a>
 												{{/if_Neq}}
 											</div>
 											
@@ -102,14 +104,16 @@
 										</div>
 									</td>
 									<td class="column-5">{{this.singleTotal}}</td>
-									<td class="column-6"><a href="" onclick="deleteProduct('{{this._id}}','{{this.product._id}}')"class="zmdi zmdi-delete" style="text-decoration:none ; color: red;"></a></td>
+									<td class="column-6"><a  onclick="deleteProduct('{{this._id}}','{{this.product._id}}')"class="zmdi zmdi-delete" style="text-decoration:none ; color: red;"></a></td>
               						
 								</tr>
 							{{else}}
+							<div>
 								<h3 class="p-5 ">Cart is Empty</h3>
-								<a href="/shop" class=" flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+								<a href="/" class=" flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
 								Shop
 								</a>
+							</div>	
 							{{/each}}
 							</table>
 						</div>
@@ -253,7 +257,7 @@
 	let quantity = parseInt(document.getElementById(proId).innerHTML)
 	count = parseInt(count)
 	console.log(user)
-	$.ajax({
+		$.ajax({
 		url:'/changeCartProductQuantity',
 		data:{
 			user:user,
@@ -270,6 +274,7 @@
 			$("#cartReload").load(window.location.href + " #cartReload");
 		} 
 	})
+	
 }
 
 </script>
@@ -297,8 +302,7 @@
 				 swal("Poof! Product Removed from Cart!", {
                     icon: "success",
                 });
-                timeout :3000;
-				location.reload()
+               $("#cartReload").load(window.location.href + " #cartReload");
 			} 
 		} 
 	})

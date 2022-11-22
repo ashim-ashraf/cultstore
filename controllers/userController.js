@@ -39,6 +39,7 @@ const {
   removeCartProduct,
   removeWishlistProduct,
 } = require("../helpers/user-helpers");
+const { getAllCategory } = require("../helpers/admin-helpers");
 const SERVICEID = process.env.SERVICEID;
 const ACCOUNT_SID = process.env.ACCOUNT_SID;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
@@ -51,6 +52,7 @@ module.exports = {
     if (req.session.userloggedIn) {
       next();
     } else {
+      console.log("no user");
       res.redirect("/login");
     }
   },
@@ -60,8 +62,9 @@ module.exports = {
     if (req.session.userloggedIn) {
       let user = req.session.user;
       console.log("test");
-      res.redirect("/homePage");
+      res.redirect("/");
     } else {
+      console.log("login page called");
       let error = req.query.valid;
       res.render("users/login", { error });
       req.session.userLoginErr = false;
@@ -85,7 +88,7 @@ module.exports = {
       req.session.userloggedIn = true;
       console.log(req.session);
       req.session.user = user;
-      res.redirect("/homePage");
+      res.redirect("/");
     });
   },
 
@@ -93,7 +96,7 @@ module.exports = {
   userSignUp: (req, res) => {
     if (req.session.userloggedIn) {
       const user = req.session.user;
-      res.redirect("/homePage");
+      res.redirect("/");
     } else {
       let error = req.query.valid;
       console.log(error);
@@ -137,7 +140,7 @@ module.exports = {
                             // $push: {
                             //   history: {
                             //     type: "Referal Bonus",
-                                
+
                             //   },
                             // },
                           }
@@ -182,16 +185,22 @@ module.exports = {
 
   //rendering homepage initially , all products are ftched and loaded using get all products function
   homePage: async (req, res) => {
-    if (req.session.userloggedIn) {
-      // let users = await getAllUsers(req.body);
-      productHelpers.getAllProducts(req.body).then(async (products) => {
-        let user = req.session.user;
-        let banner = await getAllBanner();
-        res.render("users/index", { user, products, banner });
-      });
-    } else {
-      res.redirect("/login");
-    }
+    productHelpers.getAllProducts(req.body).then(async (products) => {
+      let user = req.session.user;
+      let banner = await getAllBanner();
+      let category = await getAllCategory();
+      console.log(category);
+      res.render("users/index", { user, products, banner, category });
+    });
+  },
+
+  displayShop: async (req, res) => {
+    productHelpers.getAllProducts(req.body).then(async (products) => {
+      let user = req.session.user;
+      let banner = await getAllBanner();
+      let category = await getAllCategory();
+      res.render("users/shop", { user, products, banner, category });
+    });
   },
 
   //product detail page , three images are loaded with image zoom
@@ -204,11 +213,16 @@ module.exports = {
 
   //route called when add to cart clicked in product detail page
   cartEntry: async (req, res) => {
-    let productId = req.body.productId;
-    let price = req.body.price;
-    await addToCart(req.session.user._id, productId, price).then((status) => {
-      res.redirect("/displayCart");
-    });
+    if (req.session.userloggedIn) {
+      let productId = req.body.productId;
+      let price = req.body.price;
+      await addToCart(req.session.user._id, productId, price).then((status) => {
+        console.log("entered loop");
+        res.json(true);
+      });
+    } else {
+      res.json(false);
+    }
   },
 
   addItemToWishlist: async (req, res) => {
@@ -303,7 +317,7 @@ module.exports = {
     }
     console.log(total);
     if (total == undefined) {
-      res.redirect("/homePage");
+      res.redirect("/");
     } else {
       let address = await getUserAddress(req.session.user);
       let user = req.session.user;
@@ -464,8 +478,6 @@ module.exports = {
     );
   },
 
-
-
   orderSuccess: async (req, res) => {
     let user = req.session.user;
     let coupon = req.session.coupon;
@@ -489,16 +501,16 @@ module.exports = {
     res.render("users/orderFailure");
   },
 
-  logout:(req, res) => {
+  logout: (req, res) => {
     req.session.user = null;
     req.session.userloggedIn = null;
     console.log("session destroyed");
-    res.redirect("/login");
+    res.redirect("/");
   },
 
   otpLogin: (req, res) => {
     if (req.session.userloggedIn) {
-      res.redirect("/homePage");
+      res.redirect("/");
     } else {
       let error = req.query.valid;
       console.log(error);
@@ -508,7 +520,7 @@ module.exports = {
 
   otpEntryForm: (req, res) => {
     if (req.session.userloggedIn) {
-      res.redirect("/homePage");
+      res.redirect("/");
     } else {
       error = req.query.error;
       res.render("users/otpEntryForm", { error });
@@ -552,7 +564,7 @@ module.exports = {
             console.log("OTP Approved");
             req.session.user = user;
             req.session.userloggedIn = true;
-            res.redirect("/homePage");
+            res.redirect("/");
           });
         } else {
           const firstError = encodeURIComponent("Invalid OTP");

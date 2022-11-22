@@ -31,6 +31,7 @@ const {
   paypalSuccess,
   orderFailed,
   logout,
+  displayShop,
 } = require("../controllers/userController");
 const router = express.Router();
 const { userSignupValidator } = require("../validator/customValidation");
@@ -57,7 +58,9 @@ router.get("/codeEntryForm", otpEntryForm);
 router.post("/otpSubmit", verifyOtp);
 
 //rendering homepage
-router.get("/homePage", homePage);
+router.get("/", homePage);
+
+router.get("/shopPage" , displayShop)
 
 //rendering product details page
 router.get("/productDetailPage", productDetailPage);
@@ -69,8 +72,8 @@ router.get("/displayWishlist", verifyLogin, displayWishlist);
 
 router.post("/removeProductFromWishlist", deleteWishlistProduct);
 
-/*Rendering the cart */
-router.post("/addToCart", verifyLogin, cartEntry);
+/*Rendering the cart, verify login handled throungh ajax*/
+router.post("/addToCart",   cartEntry);
 
 router.get("/displayCart", verifyLogin, displayCart);
 
@@ -88,11 +91,11 @@ router.post("/proceedToPayment", verifyLogin, placeUserOrder);
 
 router.post("/verifyPayment", paymentVerification);
 
-router.get("/orderSuccess-paypal", paypalSuccess);
+router.get("/orderSuccess-paypal", verifyLogin, paypalSuccess);
 
-router.get("/orderSuccess", orderSuccess);
+router.get("/orderSuccess", verifyLogin, orderSuccess);
 
-router.get("/orderFailed", orderFailed);
+router.get("/orderFailed", verifyLogin, orderFailed);
 
 router.get("/orders", verifyLogin, paginatedResults(order), userOrders);
 

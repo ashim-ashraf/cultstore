@@ -30,7 +30,9 @@ function addToCart(proId,price){
         swal("Item added to Cart", {
           icon: "success",
       });
-      } 
+      }  else {
+        location.href = "/login"
+      }
     },
   });
 }
