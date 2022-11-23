@@ -3,8 +3,8 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 const { getAllOrders, getOrdersByDate, getOrdersByMonth, getOrdersByYear, getSalesByYear, getAllSales, getPaymentData, getYearlyGraphData } = require("../helpers/admin-helpers");
 const { getProductsByOrders } = require("../helpers/product-helpers");
-const data = "Admin";
-const password = "123";
+const data = process.env.ADMIN_USERNAME;
+const password = process.env.ADMIN_PASSWORD;
 
 module.exports = {
   
