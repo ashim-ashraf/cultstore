@@ -83,30 +83,7 @@ $("#address-form").submit((e) => {
   });
 });
 
-//form that submits the payment option from the radio button selection
-$("#payment-form").submit((e) => {
-  e.preventDefault();
-  $.ajax({
-    url: "/proceedToPayment",
-    method: "post",
-    data: $("#payment-form").serialize(),
-    success: (response) => {
-      if (response.codSuccess) {
-        location.href = "/orderSuccess";
-      } else if (response.Razorpay) {
-        razorpayPayment(response);
-      } else if (response.Paypal) {
-        paypalPayment(response);
-      } else if (response.walletSuccess) {
-        location.href = "/orderSuccess";
-      } else if (response.walletBalanceError) {
-        swal("Insufficient Balance In Wallet", {
-          icon: "warning",
-        });
-      }
-    },
-  });
-});
+
 
 function razorpayPayment(order) {
   console.log("order in yju6fki876ytjyu", order.id);

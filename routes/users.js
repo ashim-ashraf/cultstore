@@ -60,6 +60,7 @@ router.post("/otpSubmit", verifyOtp);
 //rendering homepage
 router.get("/", homePage);
 
+/*shop page , homepage wihtout banners*/
 router.get("/shopPage" , displayShop)
 
 //rendering product details page

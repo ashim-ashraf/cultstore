@@ -57,7 +57,6 @@ hbs.registerHelper('if_or', function (a, b, opts) {
     return opts.fn(this);
   else return opts.inverse(this);
 });
-
 hbs.registerHelper('formatTime', function (date, format) {
   var mmnt = moment(date);
   return mmnt.format(format);

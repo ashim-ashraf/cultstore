@@ -50,23 +50,8 @@ module.exports = {
       let userWallet = await wallet.findOne({ user: userId });
 
       if (userWallet) {
-        let walletExist = userWishlist.user.findIndex(
-          (wallet) => wallet.user == userId
-        );
-        console.log(walletExist);
-
-        if (walletExist != -1) {
           resolve("wallet exist");
         } else {
-          console.log("wallet updated");
-          const query = { user: userId };
-          const updateDocument = {
-            $push: { products: productObj },
-          };
-          const result = await wallet.updateOne(query, updateDocument);
-          resolve(result);
-        }
-      } else {
         let walletObj = {
           user: ObjectId(userId),
           email: userEmail,
@@ -387,14 +372,24 @@ module.exports = {
 
   placeOrder: (orderDetails, user, productsDetails, total, coupon) => {
     console.log("in place Order", productsDetails);
+    
     return new Promise(async (resolve, reject) => {
       let status = orderDetails["payment"] === "COD" ? "success" : "pending";
-      let [{ address }] = await Address.aggregate([
-        { $unwind: "$address" },
-        { $match: { "address._id": ObjectId(orderDetails.address) } },
-        { $project: { _id: 0, address: 1 } },
-      ]);
-
+      if(orderDetails["payment"]){
+        console.log(orderDetails["payment"]);
+      } else {
+        reject("paymentSelect")
+      }
+      
+      if(orderDetails.address){
+        let [{ address }] = await Address.aggregate([
+          { $unwind: "$address" },
+          { $match: { "address._id": ObjectId(orderDetails.address) } },
+          { $project: { _id: 0, address: 1 } },
+        ]);
+      } else {
+        reject("addressSelect")
+      }
       let orderObj = {
         userId: ObjectId(user._id),
         products: productsDetails.products,

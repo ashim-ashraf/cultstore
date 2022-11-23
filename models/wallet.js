@@ -6,12 +6,7 @@ const walletSchema = new mongoose.Schema(
     user: mongoose.ObjectId,
     email: String,
     balance: Number,
-    history: [
-      {
-        type: String,
-        // amount: Number,
-      },
-    ],
+    history: Array,
   },
   { versionKey: false }
 );

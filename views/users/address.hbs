@@ -198,6 +198,7 @@
                       name="address"
                       value="{{this.address._id}}"
 					          checked
+                    required
                     />
                     <label for="vehicle1"> Use this</label>
 
@@ -292,6 +293,40 @@
         <i class="zmdi zmdi-chevron-up"></i>
       </span>
     </div>
+<script>
+  //form that submits the payment option from the radio button selection
+$("#payment-form").submit((e) => {
+  e.preventDefault();
+  $.ajax({
+    url: "/proceedToPayment",
+    method: "post",
+    data: $("#payment-form").serialize(),
+    success: (response) => {
+      if(response.addressError){
+         swal("Please provide delivery address", {
+          icon: "warning",
+        });
+      } else if(response.payButtonError) {
+        swal(" Please select a vallid Payment Option", {
+          icon: "warning",
+        });
+      } else if (response.codSuccess) {
+        location.href = "/orderSuccess";
+      } else if (response.Razorpay) {
+        razorpayPayment(response);
+      } else if (response.Paypal) {
+        paypalPayment(response);
+      } else if (response.walletSuccess) {
+        location.href = "/orderSuccess";
+      } else if (response.walletBalanceError) {
+        swal("Insufficient Balance In Wallet", {
+          icon: "warning",
+        });
+      }
+    },
+  });
+});
+</script>
 
 	<!-- razor pay-->
 	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>

@@ -121,7 +121,7 @@
 							<i class="zmdi zmdi-search"></i>
 						</button>
 
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+						<input class="mtext-107 cl2 size-114 plh2 p-r-15 search" type="text" name="search-product" placeholder="Search">
 					</div>	
 				</div>
 			</div>
@@ -140,9 +140,9 @@
 							</a>
 						</div>
 
-						<div class="block2-txt flex-w flex-t p-t-14">
+						<div class="block2-txt flex-w flex-t p-t-14 item-entry">
 							<div class="block2-txt-child1 flex-col-l ">
-								<a href="/productDetailPage?product={{this._id}}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+								<a href="/productDetailPage?product={{this._id}}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6 item-title">
 									{{this.name}}
 								</a>
 
@@ -170,7 +170,20 @@
 
 	{{>userFooter}}
 
-
+	<script>
+		function search() {
+		let product = document.getElementsByClassName('item-entry')
+		let productname = document.getElementsByClassName('item-title')
+		let searchval = document.getElementById('search').value.toLowerCase()
+		for (i = 0; i < product.length; i++) {
+			if (productname[i].innerHTML.toLowerCase().search(searchval) == -1) {
+			product[i].hidden = true
+			} else {
+			product[i].hidden = false
+			}
+		}
+		}
+  	</script>
 
 <!--===============================================================================================-->	
 	<script src="user/vendor/jquery/jquery-3.2.1.min.js"></script>

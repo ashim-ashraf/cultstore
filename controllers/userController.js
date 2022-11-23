@@ -40,6 +40,7 @@ const {
   removeWishlistProduct,
 } = require("../helpers/user-helpers");
 const { getAllCategory } = require("../helpers/admin-helpers");
+const { response } = require("../app");
 const SERVICEID = process.env.SERVICEID;
 const ACCOUNT_SID = process.env.ACCOUNT_SID;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
@@ -106,10 +107,13 @@ module.exports = {
 
   //user signup form data submission
   userSignUpSubmit: async (req, res) => {
+    // assigning a refferal code to the new user
     req.body.code = referralCodeGenerator.alpha("uppercase", 6);
     if (req.body.referralCode) {
-      let ref = await User.findOne({ code: req.body.referralCode });
+      //finding the existing user who has matching referal code entered by new user 
+      let ref = await User.findOne({ code: req.body.referralCode });  
       if (ref) {
+        //creating new user in the db
         const user = new User(req.body);
         user.save(async (err, user) => {
           if (err) {
@@ -117,6 +121,7 @@ module.exports = {
               err: errorHandler(err),
             });
           } else {
+            //assigning the new user data by fetching it back from the db to a variable
             let userDetails = await User.findOne({ email: req.body.email });
             console.log(user);
             console.log("first log", userDetails);
@@ -135,12 +140,12 @@ module.exports = {
                         console.log(referredUser._id);
                         await wallet.updateOne(
                           { user: referredUser._id },
-                          {
-                            $inc: { balance: 1000 },
+                          { 
+                            $inc: { balance: 500 },
                             // $push: {
                             //   history: {
                             //     type: "Referal Bonus",
-
+                            //     amount: 1000
                             //   },
                             // },
                           }
@@ -149,7 +154,12 @@ module.exports = {
                           { email: req.body.email },
                           {
                             $inc: { balance: 500 },
-                            // $push: { history: historyObj },
+                            // $push: {
+                            //   history: {
+                            //     type: "Referal Bonus",
+                            //     amount: 1000
+                            //   },
+                            // },
                           }
                         );
                         console.log("last", response);
@@ -341,11 +351,6 @@ module.exports = {
   },
 
   userOrders: async (req, res) => {
-    // await getUserOrders(req.session.user).then((orders) => {
-    //   let user = req.session.user;
-    //   console.log(orders);
-    //   res.render("users/orders", { user, orders });
-    // });
     let orders = res.paginatedResults.results;
     let pageNos = res.paginatedResults.pageNos;
     let previous = res.paginatedResults.previous;
@@ -361,13 +366,6 @@ module.exports = {
       res.render("users/orderDetails", { products });
     });
   },
-
-  // cancelOrder: async (req, res) => {
-  //   console.log(req.body.address);
-  //   await cancelOrder(req.body).then((response) => {
-  //     res.json(response);
-  //   });
-  // },
 
   changeProductStatus: async (req, res) => {
     await orderProductStatus(
@@ -426,7 +424,14 @@ module.exports = {
             });
         }
       }
-    );
+    ).catch((status) => {
+      console.log("catch called due to address error");
+      if(status === "paymentSelect"){
+        res.json({ payButtonError: true })
+      } else if (status === "addressSelect") {
+        res.json({ addressError: true })
+      }
+    });
   },
 
   paymentVerification: (req, res) => {
@@ -535,10 +540,11 @@ module.exports = {
       if (user) {
         client.verify.v2
           .services(SERVICEID)
-          .verifications.create({ to: "+44" + phoneNumber, channel: "sms" })
+          .verifications.create({ to: "+91" + phoneNumber, channel: "sms" })
           .then((verification) => {
-            res.redirect("/codeEntryForm");
             console.log("11");
+            res.redirect("/codeEntryForm");
+            
           });
       } else {
         let error = encodeURIComponent(
@@ -553,7 +559,7 @@ module.exports = {
     client.verify.v2
       .services(SERVICEID)
       .verificationChecks.create({
-        to: "+44" + phoneNumber,
+        to: "+91" + phoneNumber,
         code: "otp",
         code: req.body.code,
       })
