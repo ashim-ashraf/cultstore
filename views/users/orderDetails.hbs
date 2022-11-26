@@ -79,7 +79,7 @@
                                     <td class="column-3 pl-4">{{../products.quantity}}</td>
 									<td class="column-3">{{../products.status}}</td>
 							
-									{{#if_eq ../products.status "Order Delivered" }}
+									{{#if_eq ../products.status "Order Delivered"}}
 										<td class="column-3"><i onclick="changeOrderStatus('{{../_id}}','{{../products.item}}','Return Initiated')" class="btn btn-info">Return</i></td>
 									{{else}} 
 										{{#if_Neq ../products.status "Order Cancelled"}}

@@ -98,25 +98,25 @@ module.exports = {
 
   getAllSalesReport : async (req,res,next) => {
     await getAllSales().then((report) => {
-      res.render("admin/salesReport", {report})
+      res.render("admin/salesreport", {report})
     })
     },
 
   reportByDate : async (req,res) => {
     await getOrdersByDate(req.query.fromDate, req.query.toDate).then((dailyReport) => {
-      res.render("admin/salesReport", {dailyReport})
+      res.render("admin/salesreport", {dailyReport})
     })
     },
   
   reportByMonth : async (req,res) => {
     await getOrdersByMonth(req.query.month).then((monthlyReport) => {
-      res.render("admin/salesReport", {monthlyReport})
+      res.render("admin/salesreport", {monthlyReport})
     })
     },
 
   reportByYear : async (req,res) => {
     await getOrdersByYear(req.query.year).then((yearlyReport) => {
-      res.render("admin/salesReport", {yearlyReport})
+      res.render("admin/salesreport", {yearlyReport})
     })
     },
 

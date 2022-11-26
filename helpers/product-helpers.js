@@ -14,6 +14,54 @@ const wishlist = require("../models/wishlist");
 const { db } = require("../models/user");
 
 module.exports = {
+  removeCartProduct: async (productDetails) => {
+    let cartId = productDetails.cart;
+    let productId = productDetails.product;
+    let cartQuantity =parseInt(productDetails.cartQuantity) ;
+    return new Promise(async (resolve, reject) => {
+      await cart
+        .updateOne(
+          { _id: cartId, "products.item": productId },
+          { $pull: { products: { item: productId } } }
+        )
+        .then( async(response) => {
+          console.log(productId)
+          let result = await product
+          .updateOne({_id: productId},{$inc: {quantity: cartQuantity }})
+          console.log("hiiiiiiiiiiiiiiiiiii", result);
+          resolve({ removeProduct: true });
+        });
+    });
+  },
+
+  changeProductQuantity: (userObject) => {
+    // console.log(userObject);
+    const cartId = userObject.cart;
+    const productId = userObject.product;
+    const count = parseInt(userObject.count);
+    return new Promise(async (resolve, reject) => {
+        let modifier = -(count);
+        let productData = await product.findOne({_id: productId})
+        console.log("product fetched from db as -----------------------------------------------" , productData.quantity )
+        if (productData.quantity == 0 && count == 1){
+          let resultObj = {
+            outOfStock : true,
+            productId : productId
+          }
+          reject(resultObj);
+        } else {
+          await cart.updateOne(
+            { _id: cartId, "products.item": productId },
+            { $inc: { "products.$.quantity": count } }
+          ).then( async(response) =>{
+           let productUpdate = await product
+          .updateOne({_id: productId},{$inc: {quantity: modifier }})
+          resolve({ status: true });
+          });
+        }
+      })
+  },
+
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
       let products = await product.find();
@@ -43,6 +91,26 @@ module.exports = {
       let productDetails = await product.find({ _id: productId });
       resolve(productDetails);
     });
+  },
+
+  productStatus: (productId,userId) => {
+    return new Promise(async (resolve, reject) => {
+      let userCart = await Cart.findOne({ user: userId });
+      console.log(userCart);
+      if (userCart) {
+        let productExist = userCart.products.findIndex(
+          (product) => product.item == productId
+        );
+    
+        if (productExist != -1) {
+          resolve(true);
+        } else{
+          resolve(false)
+        }
+        } else {
+          resolve(false)
+        }
+    })
   },
 
   walletByUser: (userId, userEmail) => {
@@ -181,7 +249,7 @@ module.exports = {
           (product) => product.item == productId
         );
         // let count = await Cart.aggregate({products:{$elemMatch:{$productNo: productId}}})
-        console.log(productExist);
+        
 
         if (productExist != -1) {
           resolve("product already exist");
@@ -429,7 +497,7 @@ module.exports = {
 
   removeFailedOrders: (user) => {
     return new Promise(async (resolve, reject) => {
-      await order.deleteMany({paymentStatus: "pending"}).then((result) => {
+      await order.deleteMany({_id: user._id, paymentStatus: "pending"}).then((result) => {
         console.log(result);
         resolve(result)
       })

@@ -50,7 +50,7 @@ module.exports = {
           details["payment[razorpay_payment_id]"]
       );
       hmac = hmac.digest("hex");
-      if (hmac == details["payment[razorpay_signature]"]) {
+      if (hmac == details["payment[razorpay_signature]"]) {r,
         console.log(" resolved");
         resolve();
       } else {

@@ -40,7 +40,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 hbs.registerHelper('if_eq', function (a, b, opts) {
-  if (a == b)
+  if (a === b)
     // Or === depending on your needs
     return opts.fn(this);
   else return opts.inverse(this);

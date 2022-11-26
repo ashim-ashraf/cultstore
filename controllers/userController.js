@@ -23,6 +23,9 @@ const {
   addToWishlist,
   getWishlistItems,
   removeFailedOrders,
+  productStatus,
+  removeCartProduct,
+  changeProductQuantity,
 } = require("../helpers/product-helpers");
 const {
   generateRazorpay,
@@ -36,7 +39,6 @@ const { Number } = require("mongoose/lib/schema/index");
 const coupon = require("../models/coupon");
 const { getAllBanner } = require("../helpers/offer-helpers");
 const {
-  removeCartProduct,
   removeWishlistProduct,
 } = require("../helpers/user-helpers");
 const { getAllCategory } = require("../helpers/admin-helpers");
@@ -72,6 +74,15 @@ module.exports = {
     }
   },
 
+  urlRedirect :  (req, res, next) => {
+    req.session.returnToUrl = req.originalUrl
+    if (req.session.user) {
+      next();
+    } else {
+      res.redirect("/login");
+    }
+  },
+
   //login form data submition
   userLoginSubmit: (req, res, next) => {
     const { email, password } = req.body;
@@ -89,7 +100,9 @@ module.exports = {
       req.session.userloggedIn = true;
       console.log(req.session);
       req.session.user = user;
-      res.redirect("/");
+      const redirect= req.session.returnToUrl || '/'
+      req.session.returnToUrl = null;
+      res.redirect(redirect)
     });
   },
 
@@ -215,9 +228,17 @@ module.exports = {
 
   //product detail page , three images are loaded with image zoom
   productDetailPage: async (req, res) => {
-    await getProduct(req.query.product).then((productDetails) => {
+    await getProduct(req.query.product).then( async (productDetails) => {
       let user = req.session.user;
-      res.render("users/productDetailPage", { productDetails, user });
+      let status = false;
+      if(req.session.userloggedIn){
+        console.log("user found ");
+        status = await productStatus(req.query.product, user._id)
+        console.log(status);
+      }
+      productExist=status;
+      console.log("check", productExist);
+      res.render("users/productDetailPage", { productDetails, user, productExist });
     });
   },
 
@@ -270,14 +291,16 @@ module.exports = {
 
   //route to change product quantity, changeProductQuantity function called
   productQuantity: (req, res, next) => {
-    userHelpers.changeProductQuantity(req.body).then(async (response) => {
+    changeProductQuantity(req.body).then(async (response) => {
       if (response.removeProduct != true) {
         response.totalAmount = await productHelpers.getCartTotal(
           req.session.user
         );
       }
-      console.log(response);
       res.json(response);
+    }).catch((result) => {
+      console.log(result);
+      res.json(result);
     });
   },
 
@@ -509,6 +532,7 @@ module.exports = {
   logout: (req, res) => {
     req.session.user = null;
     req.session.userloggedIn = null;
+    req.session.returnToUrl = null;
     console.log("session destroyed");
     res.redirect("/");
   },
@@ -597,4 +621,24 @@ module.exports = {
     console.log(walletDetails);
     res.render("users/profile", { user, walletDetails });
   },
+
+  wishlistCount :  async (req,res) => {
+    if(req.session.userloggedIn){
+      let userWishlist = await getWishlistItems(req.session.user);
+      let wishlistCount = userWishlist.length;
+      res.json(wishlistCount) 
+    } else {
+      res.json(false);
+    }
+  },
+
+  cartCount :  async (req,res) => {
+    if(req.session.userloggedIn){
+      let userCart = await getCartItems(req.session.user);
+      let cartCount = userCart.length;
+      res.json(cartCount) 
+    } else {
+      res.json(false);
+    }
+  }
 };

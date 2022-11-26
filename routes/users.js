@@ -32,11 +32,15 @@ const {
   orderFailed,
   logout,
   displayShop,
+  urlRedirect,
+  wishlistCount,
+  cartCount,
 } = require("../controllers/userController");
 const router = express.Router();
 const { userSignupValidator } = require("../validator/customValidation");
 const { productById } = require("../controllers/productController");
 const order = require("../models/order");
+const { getCartItems, getWishlistItems } = require("../helpers/product-helpers");
 
 // signUp process
 router.get("/signUp", userSignUp);
@@ -61,22 +65,26 @@ router.post("/otpSubmit", verifyOtp);
 router.get("/", homePage);
 
 /*shop page , homepage wihtout banners*/
-router.get("/shopPage" , displayShop)
+router.get("/shopPage" ,  displayShop)
 
 //rendering product details page
-router.get("/productDetailPage", productDetailPage);
+router.get("/productDetailPage",  productDetailPage);
 
 /*Wishlist*/
 router.post("/addToWishlist", verifyLogin, addItemToWishlist);
 
-router.get("/displayWishlist", verifyLogin, displayWishlist);
+router.get("/displayWishlist", urlRedirect, displayWishlist);
 
 router.post("/removeProductFromWishlist", deleteWishlistProduct);
 
 /*Rendering the cart, verify login handled throungh ajax*/
 router.post("/addToCart",   cartEntry);
 
-router.get("/displayCart", verifyLogin, displayCart);
+router.get("/displayCart", urlRedirect,  displayCart);
+
+router.get("/getCartCount" , cartCount);
+
+router.get("/getWishlistCount" , wishlistCount);
 
 router.post("/applyCoupon", userCoupon);
 

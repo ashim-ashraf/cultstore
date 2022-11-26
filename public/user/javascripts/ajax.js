@@ -30,12 +30,30 @@ function addToCart(proId,price){
         swal("Item added to Cart", {
           icon: "success",
       });
+      cartBadge();
+      $("#reloadpage").load(window.location.href + " #reloadpage");
       }  else {
         location.href = "/login"
       }
     },
   });
 }
+
+
+function cartBadge() {
+			 $.ajax({
+				url: "/getCartCount",
+				method: "get",
+				success: (response) => {
+					if(response){
+						$("#cartBadge").attr("data-notify", response);
+					} else {
+						$("#cartBadge").attr("data-notify", "0");
+					}	
+				}
+			})
+		}
+
 
 function applyCoupon() {
   let couponCode = document.getElementById("couponInput").value;

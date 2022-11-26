@@ -57,7 +57,7 @@
 		
 {{#each productDetails}}
 	<!-- Product Detail -->
-	<section class="sec-product-detail bg0 p-t-65 p-b-60">
+	<section  class="sec-product-detail bg0 p-t-65 p-b-60">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-6 col-lg-7 p-b-30">
@@ -120,11 +120,21 @@
 						<!--  -->
 						<div class="p-t-33">
 							
-							<div class="flex-w flex-r-m p-b-10">
-								<div class="size-204 flex-w flex-m respon6-next">
-									<a   onclick="addToCart('{{this._id}}','{{this.price}}')"  class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
-										Add to cart
-									</a>
+							<div  class="">
+								<div id="reloadpage" class="size-204 flex-w flex-m respon6-next">
+									{{#if ../productExist }}
+										<a  href="/displayCart" class="flex-c-m stext-101 cl0 size-101 bg3 bor1 hov-btn1 p-lr-15 trans-04 ">
+											Go to cart
+										</a>
+									{{else}}
+									{{#if_eq this.quantity 0}}
+										<p style="color: red; red">Out of Stock</p>
+									{{else}}
+										<a onclick="addToCart('{{this._id}}','{{this.price}}')"  class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
+											Add to cart
+										</a>
+									{{/if_eq}}
+									{{/if}}
 								</div>
 							</div>	
 						</div>
@@ -166,7 +176,7 @@
 	<!-- Footer -->
 	{{>userFooter}}
 
-
+	
 	
 
 	{{!-- <!-- Modal1 -->

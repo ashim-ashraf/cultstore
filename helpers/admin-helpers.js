@@ -71,16 +71,42 @@ module.exports = {
       let orders = await order.aggregate([
         {
           $project: {
-            _id: 1,
-            userId: 1,
+            _id: 0,
+            // userId: 1,
+            products:1,
             paymentMethod: 1,
-            deliveryDetails: 1,
-            totalAmount: 1,
+            paymentStatus:1,
+            // deliveryDetails: 1,
+            // totalAmount: 1,
             date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
           },
         },
+        {
+          $unwind:"$products"
+        },
+        {
+          $group:{_id: "$products.item", quantity: {$sum: "$products.quantity"} }
+        },
+        {
+          $lookup:{
+            from: "products",
+            localField: "_id",
+            foreignField: "_id",
+            as: "productDetails"
+          }
+        },{
+          $project: {
+            quantity:1,
+            product: { $arrayElemAt : ["$productDetails",0]},
+          },      
+        },
+        {
+          $addFields:{
+            total : {$multiply: ["$quantity","$product.price"]}
+          }   
+        }
       ]);
-      console.log("allsales", orders);
+      console.log("test" , orders);
       resolve(orders);
     });
   },
