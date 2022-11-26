@@ -425,8 +425,8 @@ module.exports = {
             res.json(response);
           });
         } else if (req.body["payment"] === "Paypal") {
-          let totalUsd = totalAmount * 0.012;
-          req.session.paypalAmt = totalUsd;
+          let totalUsd = parseInt(totalAmount * 0.012);
+          req.session.paypalAmt = totalUsd ;
           req.session.paypalOderId = orderId;
           generatePaypal(totalUsd, cartProducts).then((response) => {
             console.log("paypal test");
@@ -628,8 +628,9 @@ module.exports = {
       if(userWishlist){
         let wishlistCount = userWishlist.length;
         res.json(wishlistCount) 
+      } else {
+        res.json(false);
       }
-      res.json(false);
     } else {
       res.json(false);
     }

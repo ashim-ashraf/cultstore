@@ -84,8 +84,8 @@ module.exports = {
           payment_method: "paypal",
         },
         redirect_urls: {
-          return_url: "http://localhost:8000/orderSuccess-paypal",
-          cancel_url: "http://localhost:8000/orderFailed",
+          return_url: "http://cultstore.tk/orderSuccess-paypal",
+          cancel_url: "http://cultstore.tk/orderFailed",
         },
         transactions: [
           {
