@@ -111,7 +111,7 @@ module.exports = {
 
       paypal.payment.create(create_payment_json, function (error, payment) {
         if (error) {
-          console.log(error, " // Refer to generate paypal function ");
+          console.log(error,response, " // Refer to generate paypal function ");
           throw error;
         } else {
           resolve(payment);
