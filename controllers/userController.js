@@ -625,8 +625,11 @@ module.exports = {
   wishlistCount :  async (req,res) => {
     if(req.session.userloggedIn){
       let userWishlist = await getWishlistItems(req.session.user);
-      let wishlistCount = userWishlist.length;
-      res.json(wishlistCount) 
+      if(userWishlist){
+        let wishlistCount = userWishlist.length;
+        res.json(wishlistCount) 
+      }
+      res.json(false);
     } else {
       res.json(false);
     }
@@ -635,8 +638,12 @@ module.exports = {
   cartCount :  async (req,res) => {
     if(req.session.userloggedIn){
       let userCart = await getCartItems(req.session.user);
-      let cartCount = userCart.length;
-      res.json(cartCount) 
+      if (userCart){
+        let cartCount = userCart.length;
+        res.json(cartCount) 
+      }else {
+        res.json(false);
+      }
     } else {
       res.json(false);
     }
