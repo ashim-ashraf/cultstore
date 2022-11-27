@@ -42,7 +42,6 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
         let modifier = -(count);
         let productData = await product.findOne({_id: productId})
-        console.log("product fetched from db as -----------------------------------------------" , productData.quantity )
         if (productData.quantity == 0 && count == 1){
           let resultObj = {
             outOfStock : true,
@@ -93,12 +92,31 @@ module.exports = {
     });
   },
 
-  productStatus: (productId,userId) => {
+  productInCartStatus: (productId,userId) => {
     return new Promise(async (resolve, reject) => {
       let userCart = await Cart.findOne({ user: userId });
-      console.log(userCart);
       if (userCart) {
         let productExist = userCart.products.findIndex(
+          (product) => product.item == productId
+        );
+    
+        if (productExist != -1) {
+          resolve(true);
+        } else{
+          resolve(false)
+        }
+        } else {
+          resolve(false)
+        }
+    })
+  },
+
+  productInWishlistStatus: (productId,userId) => {
+    return new Promise(async (resolve, reject) => {
+      let userwishlist = await wishlist.findOne({ user: userId });
+      console.log(userwishlist);
+      if (userwishlist) {
+        let productExist = userwishlist.products.findIndex(
           (product) => product.item == productId
         );
     
@@ -211,7 +229,8 @@ module.exports = {
           total <= couponDetails.priceCap &&
           total >= couponDetails.minPurchase
         ) {
-          let discountedTotal = total - (total * couponDetails.discount) / 100;
+          let discountedTotal = parseInt(total - (total * couponDetails.discount) / 100) ;
+          console.log("aaaaaaaaaaaaaaaaaaaaa222222222222222aaaaaaaa",discountedTotal);
           resolve(discountedTotal);
         } else {
           resolve({
@@ -448,25 +467,29 @@ module.exports = {
       } else {
         reject("paymentSelect")
       }
-      
+      let fetchedAddress = {};
       if(orderDetails.address){
-        let [{ address }] = await Address.aggregate([
+        let  [{address}] = await Address.aggregate([
           { $unwind: "$address" },
           { $match: { "address._id": ObjectId(orderDetails.address) } },
           { $project: { _id: 0, address: 1 } },
         ]);
+        fetchedAddress = address;
+        console.log("check" ,address);
       } else {
         reject("addressSelect")
       }
       let orderObj = {
         userId: ObjectId(user._id),
         products: productsDetails.products,
-        deliveryDetails: address,
+        deliveryDetails: fetchedAddress,
         paymentMethod: orderDetails["payment"],
         totalAmount: total,
         paymentStatus: status,
         couponDiscount: coupon.discount,
       };
+
+      console.log("order object ", orderObj);
 
       const order = new Order(orderObj);
       order.save(async (err, order) => {
