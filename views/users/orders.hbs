@@ -100,7 +100,7 @@
                   <table class="table-shopping-cart">
                     <tr class="table_head">
                       <th class="column-1">Order Id</th>
-                      {{!-- <th class="column-2 pl-5">Address</th> --}}
+                      <th class="column-2 pl-5">Address</th>
                       <th class="column-3 pl-2">Total Amount</th>
                       <th class="column-4">Order Status</th>
                       <th class="column-5 pl-5">Payment</th>
@@ -114,9 +114,9 @@
                         class="column-1"
                         onclick="showProducts('{{this._id}}')"
                       >{{this._id}}</td>
-                      {{!-- <td
+                      <td
                         class="column-2 pl-5"
-                      >{{this.deliveryDetails.address}}</td> --}}
+                      >{{this.deliveryDetails.address}}</td>
                       <td class="column-3 pl-5">{{this.totalAmount}}</td>
                       <td class="column-4">{{this.paymentStatus}}</td>
                       <td class="column-5 pl-5">{{this.paymentMethod}}</td>

@@ -26,6 +26,8 @@ const {
   productStatus,
   removeCartProduct,
   changeProductQuantity,
+  productInCartStatus,
+  productInWishlistStatus,
 } = require("../helpers/product-helpers");
 const {
   generateRazorpay,
@@ -230,15 +232,16 @@ module.exports = {
   productDetailPage: async (req, res) => {
     await getProduct(req.query.product).then( async (productDetails) => {
       let user = req.session.user;
-      let status = false;
+      let cartExist = false;
+      let wishlistExist =false;
       if(req.session.userloggedIn){
         console.log("user found ");
-        status = await productStatus(req.query.product, user._id)
-        console.log(status);
+        let cartStatus = await productInCartStatus(req.query.product, user._id)
+        let wishlistStatus = await productInWishlistStatus(req.query.product, user._id)
+        cartExist = cartStatus;
+        wishlistExist = wishlistStatus;
       }
-      productExist=status;
-      console.log("check", productExist);
-      res.render("users/productDetailPage", { productDetails, user, productExist });
+      res.render("users/productDetailPage", { productDetails, user, cartExist , wishlistExist });
     });
   },
 
@@ -258,10 +261,14 @@ module.exports = {
 
   addItemToWishlist: async (req, res) => {
     console.log(req.body);
-    let productId = req.body.productId;
-    await addToWishlist(req.session.user._id, productId).then((status) => {
+    if(req.session.userloggedIn){
+      let productId = req.body.productId;
+      await addToWishlist(req.session.user._id, productId).then((status) => {
       res.json(true);
-    });
+      });
+    } else{
+      res.json(false);
+    }
   },
 
   //wishlist
@@ -312,7 +319,9 @@ module.exports = {
   },
 
   deleteWishlistProduct: async (req, res) => {
-    await removeWishlistProduct(req.body).then((response) => {
+    let productId = req.body.productId;
+    let user = req.session.user;
+    await removeWishlistProduct(productId,user).then((response) => {
       console.log(response);
       res.json(response);
     });
@@ -402,6 +411,7 @@ module.exports = {
   },
 
   placeUserOrder: async (req, res) => {
+    console.log("payment form data", req.body);
     let user = req.session.user;
     let cartProducts = await getCartItemsList(user._id);
     let totalAmount = await getCartTotal(req.session.user);
@@ -648,5 +658,6 @@ module.exports = {
     } else {
       res.json(false);
     }
-  }
-};
+  },
+
+}

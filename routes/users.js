@@ -35,6 +35,7 @@ const {
   urlRedirect,
   wishlistCount,
   cartCount,
+  getNavCart,
 } = require("../controllers/userController");
 const router = express.Router();
 const { userSignupValidator } = require("../validator/customValidation");
@@ -71,7 +72,7 @@ router.get("/shopPage" ,  displayShop)
 router.get("/productDetailPage",  productDetailPage);
 
 /*Wishlist*/
-router.post("/addToWishlist", verifyLogin, addItemToWishlist);
+router.post("/addToWishlist", addItemToWishlist);
 
 router.get("/displayWishlist", urlRedirect, displayWishlist);
 

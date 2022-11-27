@@ -14,7 +14,6 @@ body, html {
 	font-family: Arial, sans-serif;
 	font-size: 15px;
 	color: #666666;
-
 	height: 100%;
 	background-color: #fff;
 	-webkit-box-sizing: border-box;
@@ -25,6 +24,9 @@ body, html {
 /*---------------------------------------------*/
 a:focus {outline: none;}
 a:hover {text-decoration: none;}
+a{
+	text-decoration: none;
+}
 
 /*---------------------------------------------*/
 h1,h2,h3,h4,h5,h6,p {margin: 0px;}

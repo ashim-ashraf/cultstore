@@ -12,9 +12,59 @@ function wishlistItem(productId) {
         swal("Item added to wishlist", {
           icon: "success",
       });
-      } 
+      wishlistBadge();
+      $("#reloadpage").load(window.location.href + " #reloadpage");
+      } else {
+        location.href = "/login"
+      }
     },
   });
+}
+
+function removeFromWishlist(proId){
+	swal({
+  title: "Are you sure?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+	$.ajax({
+		url:'/removeProductFromWishlist',
+		data:{
+			productId  :proId
+		},
+		method:'post',
+		success:(response) => {
+			if(response.removeProduct){
+				 swal("Poof! Product Removed from Wishlist!", {
+                    icon: "success",
+                });
+        wishlistBadge();
+        $("#reloadpage").load(window.location.href + " #reloadpage");
+				$("#wishlistItems").load(window.location.href + " #wishlistItems");
+			} 
+		} 
+	})
+	 } else {
+    swal("Hurray !! Your Order is active");
+  			}
+		});
+	}
+
+function wishlistBadge() {
+  $.ajax({
+   url: "/getWishlistCount",
+   method: "get",
+   success: (response) => {
+     if(response){
+       $(".wishlistBadge").attr("data-notify", response);
+     } else {
+       $(".wishlistBadge").attr("data-notify", "0");
+     }
+   }
+ })
 }
 
 function addToCart(proId,price){
@@ -39,6 +89,40 @@ function addToCart(proId,price){
   });
 }
 
+function deleteProduct(cartId,proId,quantity){
+	swal({
+  title: "Are you sure?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+	
+	$.ajax({
+		url:'/deletCartProduct',
+		data:{
+			cart:cartId,
+			product:proId,
+			cartQuantity: quantity
+		},
+		method:'post',
+		success:(response) => {
+			if(response.removeProduct){
+				 swal("Poof! Product Removed from Cart!", {
+                    icon: "success",
+                });
+              cartBadge();
+               $("#cartReload").load(window.location.href + " #cartReload");
+			} 
+		} 
+	})
+	 } else {
+    swal("Hurray !! Your Product is active");
+  			}
+		});
+	}
+
 
 function cartBadge() {
 			 $.ajax({
@@ -54,6 +138,39 @@ function cartBadge() {
 			})
 		}
 
+    function changeQuantity(cartId,proId,user,count){
+      document.getElementById('distotal').innerHTML = 0
+      document.getElementById("couponInput").value = null
+      let quantity = parseInt(document.getElementById(proId).innerHTML)
+      count = parseInt(count)
+      console.log(user)
+        $.ajax({
+        url:'/changeCartProductQuantity',
+        data:{
+          user:user,
+          cart:cartId,
+          product:proId,
+          count:count,
+          quantity:quantity
+    
+        },
+        method:'post',
+        success:(response) => {
+          if(response.outOfStock){
+            let proId = response.productId
+            $("#plusButton"+proId).hide();
+          }else {
+          document.getElementById(proId).innerHTML = quantity+count
+          document.getElementById('total').innerHTML = response.totalAmount
+          $("#cartReload").load(window.location.href + " #cartReload");
+          let minValue = quantity+count;  
+          }
+        } 
+      })
+      
+    }
+
+ 
 
 function applyCoupon() {
   let couponCode = document.getElementById("couponInput").value;

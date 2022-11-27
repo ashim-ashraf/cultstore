@@ -8,14 +8,13 @@ module.exports = {
 
   
 
-  removeWishlistProduct: async (productDetails) => {
-    let wishlistId = productDetails.wishlistId;
-    let productId = productDetails.productId;
+  removeWishlistProduct: async (proId , user) => {
+    
     return new Promise(async (resolve, reject) => {
       await wishlist
         .updateOne(
-          { _id: wishlistId, "products.item": productId },
-          { $pull: { products: { item: productId } } }
+          { user: user._id , "products.item": proId },
+          { $pull: { products: { item: proId } } }
         )
         .then((response) => {
           resolve({ removeProduct: true });

@@ -58,9 +58,9 @@
 		<div id="cartReload" class="container">
 			<div class="row">
 				<div  class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
-					<div class="m-l-25 m-r--38 m-lr-0-xl">
+					<div class="m-l-25 m-r--50 m-lr-0-xl">
 						<div  class="wrap-table-shopping-cart">
-							  
+							{{#if cartProducts}} 
 							<table class="table-shopping-cart">
 								<tr class="table_head">
 									<th class="column-1">Image</th>
@@ -98,18 +98,27 @@
 										</div>
 									</td>
 									<td class="column-5">{{this.singleTotal}}</td>
-									<td class="column-6"><a  onclick="deleteProduct('{{this._id}}','{{this.product._id}}','{{this.quantity}}')"class="zmdi zmdi-delete" style="text-decoration:none ; color: red;"></a></td>
+									<td class="column-6"><a  onclick="deleteProduct('{{this._id}}','{{this.product._id}}','{{this.quantity}}')"class="icon-header-item zmdi zmdi-delete" style="text-decoration:none ; color: red;"></a></td>
               						
 								</tr>
-							{{else}}
-							<div>
-								<h3 class="p-5 ">Cart is Empty</h3>
-								<a href="/" class=" flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-								Shop
-								</a>
-							</div>	
-							{{/each}}
+								{{/each}}
 							</table>
+							{{else}}
+									<div>
+									<div class="d-flex justify-content-center " >
+										<img style=" width: 340px ; height: 300px ;" src="https://media.istockphoto.com/id/861576608/vector/empty-shopping-bag-icon-online-business-vector-icon-template.jpg?s=612x612&w=0&k=20&c=I7MbHHcjhRH4Dy0NVpf4ZN4gn8FVDnwn99YdRW2x5k0=">
+									</div>
+
+									<div class="d-flex justify-content-center" >
+										<div> 
+										<h2>Cart is Empty</h1>
+										<div class="pt-2">
+											<a  href="/shopPage" class=" flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" > Go To Shop</a>
+										</div>
+										</div>
+										</div>
+								</div>
+							{{/if}}
 						</div>
 
 
@@ -198,13 +207,13 @@
 
 						<div class="flex-w flex-t p-t-27 p-b-33">
 							<div class="size-208">
-								<span class="mtext-101 cl2">
+								<span class="mtext-101 cl2 ">
 									Total:
 								</span>
 							</div>
 
 							<div class="size-209 p-t-1">
-								<span id="total" class="mtext-110 cl2">
+								<span id="total" class="mtext-110 cl2 m-l-20">
 									Rs.{{totalAmount}}
 								</span>
 							</div>
@@ -212,13 +221,13 @@
 
 						<div class="flex-w flex-t p-t-20 p-b-33">
 							<div class="size-208">
-								<span class="mtext-101 cl2">
+								<span class="mtext-101 cl2 ">
 									Discounted Total:
 								</span>
 							</div>
 
 							<div class="size-209 p-t-1">
-								<span id="distotal" class="mtext-110 cl2" >
+								<span id="distotal" class="mtext-110 cl2 m-l-20" >
 									
 								</span>
 							</div>
@@ -234,87 +243,10 @@
 		</div>
 	</form>
 		
-	
-		
 
 	<!-- Footer -->
 	{{>userFooter}}
 
-
-
-<!--===============================================================================================-->	
- 
-
-<script> function changeQuantity(cartId,proId,user,count){
-	document.getElementById('distotal').innerHTML = 0
-	document.getElementById("couponInput").value = null
-	let quantity = parseInt(document.getElementById(proId).innerHTML)
-	count = parseInt(count)
-	console.log(user)
-		$.ajax({
-		url:'/changeCartProductQuantity',
-		data:{
-			user:user,
-			cart:cartId,
-			product:proId,
-			count:count,
-			quantity:quantity
-
-		},
-		method:'post',
-		success:(response) => {
-			if(response.outOfStock){
-				let proId = response.productId
-				$("#plusButton"+proId).hide();
-			}else {
-			document.getElementById(proId).innerHTML = quantity+count
-			document.getElementById('total').innerHTML = response.totalAmount
-			$("#cartReload").load(window.location.href + " #cartReload");
-			let minValue = quantity+count;  
-			}
-		} 
-	})
-	
-}
-
-</script>
-
-
-<script> function deleteProduct(cartId,proId,quantity){
-	swal({
-  title: "Are you sure?",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
-})
-.then((willDelete) => {
-  if (willDelete) {
-	
-	$.ajax({
-		url:'/deletCartProduct',
-		data:{
-			cart:cartId,
-			product:proId,
-			cartQuantity: quantity
-		},
-		method:'post',
-		success:(response) => {
-			if(response.removeProduct){
-				 swal("Poof! Product Removed from Cart!", {
-                    icon: "success",
-                });
-               $("#cartReload").load(window.location.href + " #cartReload");
-			} 
-		} 
-	})
-	 } else {
-    swal("Hurray !! Your Product is active");
-  			}
-		});
-	}
-</script>
-
-	
 <!--===============================================================================================-->	
 	<script src="user/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
