@@ -476,30 +476,30 @@ module.exports = {
         ]);
         fetchedAddress = address;
         console.log("check" ,address);
+        let orderObj = {
+          userId: ObjectId(user._id),
+          products: productsDetails.products,
+          deliveryDetails: fetchedAddress,
+          paymentMethod: orderDetails["payment"],
+          totalAmount: total,
+          paymentStatus: status,
+          couponDiscount: coupon.discount,
+        };
+  
+        console.log("order object ", orderObj);
+  
+        const order = new Order(orderObj);
+        order.save(async (err, order) => {
+          if (err) {
+            console.log(err);
+          } 
+          let orderId = order._id;
+          console.log(orderId);
+          resolve(orderId);
+        });
       } else {
         reject("addressSelect")
       }
-      let orderObj = {
-        userId: ObjectId(user._id),
-        products: productsDetails.products,
-        deliveryDetails: fetchedAddress,
-        paymentMethod: orderDetails["payment"],
-        totalAmount: total,
-        paymentStatus: status,
-        couponDiscount: coupon.discount,
-      };
-
-      console.log("order object ", orderObj);
-
-      const order = new Order(orderObj);
-      order.save(async (err, order) => {
-        if (err) {
-          console.log(err);
-        } 
-        let orderId = order._id;
-        console.log(orderId);
-        resolve(orderId);
-      });
     });
   },
 

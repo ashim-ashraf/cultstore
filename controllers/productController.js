@@ -66,44 +66,10 @@ module.exports = {
     });
   },
 
-  updateProduct: async (req, res) => {
-    console.log("aaaaaa");
-    let imageName = req.files.map(fileName);
-    function fileName(files) {
-      return files.filename;
-    }
-    let productDetails = req.body;
-    productDetails.ImageFileName = imageName;
-    console.log(productDetails);
-    console.log(imageName);
-    if (imageName[0]) {
-      console.log('if called');
-      await product
-        .replaceOne({ _id: productDetails._id }, productDetails)
-        .then((result) => {
-          console.log(result);
-          
-        });
-        res.redirect("/admin/productManagement");
-    } else {
-      console.log('else called');
-      await product.updateOne(
-        { _id: productDetails._id },
-        {
-          name: productDetails.name,
-          description: productDetails.description,
-          actualprice: productDetails.actualprice,
-          price: productDetails.price,
-          category: productDetails.category,
-          quantity: productDetails.quantity,
-        }
-      ).then((result) => {
-        console.log(result); 
-      });
-      res.redirect("/admin/productManagement");
-    }
-  },
  
+ 
+  
+
   createProduct: (req, res) => {
     let imageName = req.files.map(fileName);
     function fileName(files) {
@@ -123,28 +89,29 @@ module.exports = {
   },
 
   productDashboard: (req, res) => {
+    console.log("pro dash");
     getAllCategory().then((category) => {
       let cat = category;
-
       console.log(cat);
       productHelpers.getAllProducts().then((products) => {
         res.render("admin/productManagement", { products, cat });
       });
     });
+  }
 
-    product
-      .aggregate([
-        {
-          $lookup: {
-            from: "category",
-            localField: "price",
-            foreignField: "price",
-            as: "inventory_docs",
-          },
-        },
-      ])
-      .then((data) => {
-        console.log(data);
-      });
-  },
-};
+  //   product
+  //     .aggregate([
+  //       {
+  //         $lookup: {
+  //           from: "category",
+  //           localField: "price",
+  //           foreignField: "price",
+  //           as: "inventory_docs",
+  //         },
+  //       },
+  //     ])
+  //     .then((data) => {
+  //       console.log(data);
+  //     });
+  // },
+}

@@ -532,13 +532,14 @@ module.exports = {
       // to remove orders with payment status pending
       await removeFailedOrders(user).then((response) => {
         console.log(response);
-        res.render("users/orderSuccessfull");
+        res.render("users/orderSuccessfull",{user});
       });
     });
   },
 
   orderFailed: (req, res) => {
-    res.render("users/orderFailure");
+    let user = req.session.user;
+    res.render("users/orderFailure",{user});
   },
 
   logout: (req, res) => {
