@@ -157,27 +157,28 @@ module.exports = {
                           { user: referredUser._id },
                           { 
                             $inc: { balance: 500 },
-                            // $push: {
-                            //   history: {
-                            //     type: "Referal Bonus",
-                            //     amount: 1000
-                            //   },
-                            // },
+                            $push: {
+                              history: {
+                                type: "Referal Bonus",
+                                amount: 1000
+                              },
+                            },
                           }
                         );
                         await wallet.updateOne(
                           { email: req.body.email },
                           {
                             $inc: { balance: 500 },
-                            // $push: {
-                            //   history: {
-                            //     type: "Referal Bonus",
-                            //     amount: 1000
-                            //   },
-                            // },
+                            $push: {
+                              history: {
+                                type: "Referal Bonus",
+                                amount: 500
+                              },
+                            },
                           }
                         );
                         console.log("last", response);
+                        res.redirect("/login");
                       } else {
                         res.redirect("/login");
                       }
@@ -395,7 +396,8 @@ module.exports = {
   productsByOrder: async (req, res) => {
     await getProductsByOrders(req.query.Id).then((products) => {
       console.log(products);
-      res.render("users/orderDetails", { products });
+      let user = req.session.user;
+      res.render("users/orderDetails", { products , user });
     });
   },
 

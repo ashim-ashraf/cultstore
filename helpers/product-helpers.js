@@ -635,8 +635,14 @@ module.exports = {
           await wallet
             .updateOne(
               { user: orderDetails[0].userId },
-              { $inc: { balance: Math.round(refundAmount) } }
-            )
+              { $inc: { balance: Math.round(refundAmount) },
+                $push: {
+                  history: {
+                    type: "Order Refund",
+                    amount: refundAmount,
+                  }, 
+                }
+              })
             .then(async (result) => {
               console.log(result);
               let statusUpdate = await order.updateOne(
