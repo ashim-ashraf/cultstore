@@ -43,8 +43,9 @@
                       <input
                         type="text"
                         name="discount"
-                        id="form3Example1cg"
+                        id="discount"
                         class="form-control form-control-lg"
+                        oninput="check()"
                         required
                       />
                       <label class="form-label pt-5" for="form3Example1cg">Min Purchase
@@ -94,5 +95,13 @@
         </div>
       </div>
     </section>
+    <script>
+      function check(){
+     let value=document.getElementById('discount').value
+     if(value>100){
+      document.getElementById('discount').value=0
+     }
+    }
+    </script>
   </body>
 </html>
