@@ -30,7 +30,7 @@ mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
   })
-  .then(() => console.log("DB connected"));
+  .then(() => console.log("DB connected to MONGODB ATLAS"));
 
 // view engine setup
 // app.set("views", path.join(__dirname, "views"));
