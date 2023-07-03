@@ -25,7 +25,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc -i --delete"
           SOURCE: "/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST2 }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST_SECOND }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "/home/ubuntu/cultstore"
           EXCLUDE: "/dist/, /node_modules/, .env"
